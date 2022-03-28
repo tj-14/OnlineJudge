@@ -313,7 +313,7 @@ class JudgeDispatcher(DispatcherBase):
                     contest_problems_status[problem_id] = {"status": self.submission.result,
                                                            "_id": self.problem._id,
                                                            "score": score}
-                else:
+                elif contest_problems_status[problem_id]["status"] != JudgeStatus.ACCEPTED:
                     contest_problems_status[problem_id]["score"] = score
                     contest_problems_status[problem_id]["status"] = self.submission.result
                 user_profile.oi_problems_status["contest_problems"] = contest_problems_status
@@ -396,7 +396,9 @@ class JudgeDispatcher(DispatcherBase):
         current_score = self.submission.statistic_info["score"]
         last_score = rank.submission_info.get(problem_id)
         if last_score:
-            rank.total_score = rank.total_score - last_score + current_score
+            # rank.total_score = rank.total_score - last_score + current_score
+            rank.total_score = max(rank.total_score - last_score + current_score, rank.total_score)
+            current_score = max(current_score, last_score)
         else:
             rank.total_score = rank.total_score + current_score
         rank.submission_info[problem_id] = current_score
