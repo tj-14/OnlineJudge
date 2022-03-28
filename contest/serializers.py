@@ -4,7 +4,7 @@ from .models import Contest, ContestAnnouncement, ContestRuleType
 from .models import ACMContestRank, OIContestRank
 
 
-class CreateConetestSeriaizer(serializers.Serializer):
+class CreateContestSeriaizer(serializers.Serializer):
     title = serializers.CharField(max_length=128)
     description = serializers.CharField()
     start_time = serializers.DateTimeField()
@@ -16,7 +16,7 @@ class CreateConetestSeriaizer(serializers.Serializer):
     allowed_ip_ranges = serializers.ListField(child=serializers.CharField(max_length=32), allow_empty=True)
 
 
-class EditConetestSeriaizer(serializers.Serializer):
+class EditContestSeriaizer(serializers.Serializer):
     id = serializers.IntegerField()
     title = serializers.CharField(max_length=128)
     description = serializers.CharField()
@@ -25,6 +25,7 @@ class EditConetestSeriaizer(serializers.Serializer):
     password = serializers.CharField(allow_blank=True, allow_null=True, max_length=32)
     visible = serializers.BooleanField()
     real_time_rank = serializers.BooleanField()
+    real_time_submission = serializers.BooleanField()
     allowed_ip_ranges = serializers.ListField(child=serializers.CharField(max_length=32))
 
 

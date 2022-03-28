@@ -16,13 +16,13 @@ from utils.shortcuts import rand_str
 from utils.tasks import delete_files
 from ..models import Contest, ContestAnnouncement, ACMContestRank
 from ..serializers import (ContestAnnouncementSerializer, ContestAdminSerializer,
-                           CreateConetestSeriaizer, CreateContestAnnouncementSerializer,
-                           EditConetestSeriaizer, EditContestAnnouncementSerializer,
+                           CreateContestSeriaizer, CreateContestAnnouncementSerializer,
+                           EditContestSeriaizer, EditContestAnnouncementSerializer,
                            ACMContesHelperSerializer, )
 
 
 class ContestAPI(APIView):
-    @validate_serializer(CreateConetestSeriaizer)
+    @validate_serializer(CreateContestSeriaizer)
     def post(self, request):
         data = request.data
         data["start_time"] = dateutil.parser.parse(data["start_time"])
@@ -40,7 +40,7 @@ class ContestAPI(APIView):
         contest = Contest.objects.create(**data)
         return self.success(ContestAdminSerializer(contest).data)
 
-    @validate_serializer(EditConetestSeriaizer)
+    @validate_serializer(EditContestSeriaizer)
     def put(self, request):
         data = request.data
         try:

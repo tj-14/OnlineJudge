@@ -13,6 +13,7 @@ class Contest(models.Model):
     description = RichTextField()
     # show real time rank or cached rank
     real_time_rank = models.BooleanField()
+    real_time_submission = models.BooleanField(default=False)
     password = models.TextField(null=True)
     # enum of ContestRuleType
     rule_type = models.TextField()
