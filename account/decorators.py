@@ -128,7 +128,7 @@ def check_contest_permission(check_type="details"):
 
             # check does user have permission to get ranks, submissions in OI Contest
             if self.contest.status == ContestStatus.CONTEST_UNDERWAY and self.contest.rule_type == ContestRuleType.OI:
-                if not self.contest.real_time_rank and (check_type == "ranks" or check_type == "submissions"):
+                if not (self.contest.real_time_rank or self.contest.real_time_submission) and (check_type == "ranks" or check_type == "submissions"):
                     return self.error(f"No permission to get {check_type}")
 
             return func(*args, **kwargs)

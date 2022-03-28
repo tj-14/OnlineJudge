@@ -242,6 +242,9 @@ class ContestSubmissionListAPI(APIView):
             ):
                 submissions = submissions.filter(user_id=request.user.id)
 
+        if not request.user.is_admin_role() and not contest.real_time_rank:
+            submissions = submissions.filter(user_id=request.user.id)
+
         data = self.paginate_data(request, submissions)
         data["results"] = SubmissionListSerializer(
             data["results"], many=True, user=request.user
