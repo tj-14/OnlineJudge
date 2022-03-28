@@ -49,7 +49,8 @@ class Contest(models.Model):
         return self.rule_type == ContestRuleType.ACM or \
                self.status == ContestStatus.CONTEST_ENDED or \
                user.is_authenticated and user.is_contest_admin(self) or \
-               self.real_time_rank
+               self.real_time_rank or \
+               self.real_time_submission
 
     class Meta:
         db_table = "contest"
