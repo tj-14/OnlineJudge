@@ -172,11 +172,12 @@ class ContestRankAPI(APIView):
         if force_refresh == "1" and is_contest_admin:
             qs = self.get_rank(request.user)
         else:
-            cache_key = f"{CacheKey.contest_rank_cache}:{self.contest.id}:{self.contest.real_time_rank}:{request.user.id}"
-            qs = cache.get(cache_key)
-            if not qs:
-                qs = self.get_rank(request.user)
-                cache.set(cache_key, qs)
+            qs = self.get_rank(request.user)
+            # cache_key = f"{CacheKey.contest_rank_cache}:{self.contest.id}:{self.contest.real_time_rank}:{request.user.id}"
+            # qs = cache.get(cache_key)
+            # if not qs:
+            #     qs = self.get_rank(request.user)
+            #     cache.set(cache_key, qs)
 
         if download_csv:
             data = serializer(qs, many=True, is_contest_admin=is_contest_admin).data
