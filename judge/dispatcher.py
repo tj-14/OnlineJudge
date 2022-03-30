@@ -427,7 +427,6 @@ class JudgeDispatcher(DispatcherBase):
         has_subtask = 0
         problem_id = str(self.submission.problem_id)
         current_score = self.submission.statistic_info["score"]
-        last_sub_score = 0
         last_score = rank.submission_info.get(problem_id)
         final_subtask_scores = {}
 
@@ -453,6 +452,6 @@ class JudgeDispatcher(DispatcherBase):
                     current_score += subtask_scores[i]
                     final_subtask_scores[i] = subtask_scores[i]
             rank.total_score = rank.total_score + current_score
-        rank.submission_info[problem_id] = current_score + (last_sub_score * 1000)
+        rank.submission_info[problem_id] = current_score
         if has_subtask: rank.submission_info[problem_id + '_subtask'] = final_subtask_scores
         rank.save()
