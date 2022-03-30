@@ -49,6 +49,7 @@ class Problem(models.Model):
     samples = JSONField()
     test_case_id = models.TextField()
     # [{"input_name": "1.in", "output_name": "1.out", "score": 0}]
+    # [{"input_name": "1.in", "output_name": "1.out", "score": 0, "subtask_number" : 0}]
     test_case_score = JSONField()
     hint = RichTextField(null=True)
     languages = JSONField()

@@ -25,6 +25,7 @@ class CreateTestCaseScoreSerializer(serializers.Serializer):
     input_name = serializers.CharField(max_length=32)
     output_name = serializers.CharField(max_length=32)
     score = serializers.IntegerField(min_value=0)
+    subtask_number = serializers.IntegerField(min_value=0)
 
 
 class CreateProblemCodeTemplateSerializer(serializers.Serializer):
@@ -122,7 +123,7 @@ class ProblemSerializer(BaseProblemSerializer):
 
     class Meta:
         model = Problem
-        exclude = ("test_case_score", "test_case_id", "visible", "is_public",
+        exclude = ("test_case_score", "subtask_number", "test_case_id", "visible", "is_public",
                    "spj_code", "spj_version", "spj_compile_ok")
 
 

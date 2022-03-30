@@ -30,7 +30,6 @@ from ..serializers import (CreateContestProblemSerializer, CompileSPJSerializer,
                            FPSProblemSerializer)
 from ..utils import TEMPLATE_BASE, build_problem_template
 
-
 class TestCaseZipProcessor(object):
     def process_zip(self, uploaded_zip_file, spj, dir=""):
         try:
