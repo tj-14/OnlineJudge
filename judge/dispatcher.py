@@ -109,18 +109,50 @@ class JudgeDispatcher(DispatcherBase):
         # sum up the score in OI mode
         if self.problem.rule_type == ProblemRuleType.OI:
             score = 0
-            try:
+            final_subtask_score = {}
+            subtask_score = {}
+            max_subtask_count = 0
+            try:    
                 for i in range(len(resp_data)):
+                    if not "subtask_number" in self.problem.test_case_score[i]:
+                        subtask_number = 0
+                    else:
+                        subtask_number = self.problem.test_case_score[i]["subtask_number"]
+                        max_subtask_count = max(subtask_number, max_subtask_count)
+                    test_score = self.problem.test_case_score[i]["score"]
+
                     if resp_data[i]["result"] == JudgeStatus.ACCEPTED:
-                        resp_data[i]["score"] = self.problem.test_case_score[i]["score"]
-                        score += resp_data[i]["score"]
+                        resp_data[i]["score"] = test_score
+                        if subtask_number == 0:    
+                            score += resp_data[i]["score"]
+                        else:
+                            subtask_score[subtask_number] = subtask_score.get(subtask_number, []) + [test_score]
                     else:
                         resp_data[i]["score"] = 0
+                        if subtask_number != 0:
+                            subtask_score[subtask_number] = subtask_score.get(subtask_number, []) + [0]
+                
+                # final score and final subtask scores
+                for number, scores in subtask_score.items():
+                    final_score = min(scores)
+                    score += final_score
+                    final_subtask_score[number] = final_score
+                
+                for i in range(len(resp_data)):
+                    if not "subtask_number" in self.problem.test_case_score[i]:
+                        subtask_number = 0
+                    else:
+                        subtask_number = self.problem.test_case_score[i]["subtask_number"]
+                    
+                    if subtask_number != 0:
+                        resp_data[i]["score"] = final_subtask_score[subtask_number]
             except IndexError:
                 logger.error(f"Index Error raised when summing up the score in problem {self.problem.id}")
                 self.submission.statistic_info["score"] = 0
                 return
             self.submission.statistic_info["score"] = score
+            self.submission.statistic_info["has_subtask"] = max_subtask_count
+            self.submission.statistic_info["subtask_score"] = final_subtask_score
 
     def judge(self):
         language = self.submission.language
@@ -392,12 +424,32 @@ class JudgeDispatcher(DispatcherBase):
         rank.save()
 
     def _update_oi_contest_rank(self, rank):
+        has_subtask = 0
         problem_id = str(self.submission.problem_id)
         current_score = self.submission.statistic_info["score"]
         last_score = rank.submission_info.get(problem_id)
+        final_subtask_scores = {}
+
+        if "has_subtask" in self.submission.statistic_info and self.submission.statistic_info["has_subtask"] != 0:
+            has_subtask = self.submission.statistic_info["has_subtask"]
+            subtask_scores = self.submission.statistic_info["subtask_score"]
+            last_subtask_scores = rank.submission_info.get(problem_id + '_subtask')
+        
         if last_score:
+            if has_subtask != 0:
+                current_score = 0
+                for i in subtask_scores:
+                    final_subtask_scores[i] = max(last_subtask_scores[i], subtask_scores[i])
+                    current_score += final_subtask_scores[i]
+            current_score = max(current_score, last_score)
             rank.total_score = rank.total_score - last_score + current_score
         else:
+            if has_subtask != 0:
+                current_score = 0
+                for i in subtask_scores:
+                    current_score += subtask_scores[i]
+                    final_subtask_scores[i] = subtask_scores[i]
             rank.total_score = rank.total_score + current_score
-        rank.submission_info[problem_id] = current_score
+        rank.submission_info[problem_id] = [current_score, last_subtask_scores, subtask_scores, final_subtask_scores]
+        if has_subtask: rank.submission_info[problem_id + '_subtask'] = final_subtask_scores
         rank.save()

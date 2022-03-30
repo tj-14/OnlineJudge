@@ -81,8 +81,8 @@ class ACMContestRank(AbstractContestRank):
 
 class OIContestRank(AbstractContestRank):
     total_score = models.IntegerField(default=0)
-    # {"23": 333}
-    # key is problem id, value is current score
+    # {"23": {score: 333, 1 : 0, 2 : 0}}
+    # key is problem id, value is current score, _subtask is list of subtask scores
     submission_info = JSONField(default=dict)
 
     class Meta:
