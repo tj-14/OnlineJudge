@@ -123,7 +123,7 @@ class ProblemSerializer(BaseProblemSerializer):
 
     class Meta:
         model = Problem
-        exclude = ("test_case_score", "subtask_number", "test_case_id", "visible", "is_public",
+        exclude = ("test_case_score", "test_case_id", "visible", "is_public",
                    "spj_code", "spj_version", "spj_compile_ok")
 
 
