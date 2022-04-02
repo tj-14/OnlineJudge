@@ -50,6 +50,9 @@ class ProblemAPI(APIView):
                     problem["my_status"] = oi_problems_status.get(
                         str(problem["id"]), {}
                     ).get("status")
+                    problem["my_score"] = oi_problems_status.get(
+                        str(problem["id"]), {}
+                    ).get("score")
 
     def get(self, request):
         # 问题详情页
