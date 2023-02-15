@@ -185,13 +185,16 @@ class ProblemBase(APIView):
             data["spj_language"] = None
             data["spj_code"] = None
         if data["rule_type"] == ProblemRuleType.OI:
-            total_score = 0
+            total_score = {}
             for item in data["test_case_score"]:
                 if item["score"] <= 0:
                     return "Invalid score"
                 else:
-                    total_score += item["score"]
-            data["total_score"] = total_score
+                    if not "subtask_number" in item or item["subtask_number"] == 0:
+                        total_score[0] = total_score.get(0, 0) + item["score"]
+                    else:
+                        total_score[item["subtask_number"]] = min(total_score.get(item["subtask_number"], 10**9), item["score"])
+            data["total_score"] = sum(total_score.values())
         data["languages"] = list(data["languages"])
 
 
